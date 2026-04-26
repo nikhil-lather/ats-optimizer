@@ -1,0 +1,149 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.dashboard-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dashboard-header p {
+  color: #64748b;
+  margin-top: 0.3rem;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-card h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1.2rem;
+}
+
+.upload-area {
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.upload-area:hover {
+  border-color: #2563eb;
+}
+
+.upload-area.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.upload-area p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.upload-area span {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #eff6ff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: #2563eb;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 200px;
+  transition: border-color 0.2s;
+  color: #1e293b;
+}
+
+.textarea-field:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+.btn-analyze {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 1rem;
+}
+
+.btn-analyze:hover {
+  opacity: 0.9;
+}
+
+.btn-analyze:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.credits-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eff6ff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.credits-bar p {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.credits-bar span {
+  color: #64748b;
+  font-size: 0.9rem;
+}
