@@ -36,6 +36,11 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.setItem("user", JSON.stringify(userWithToken));
     localStorage.removeItem("guestMode");
+
+    // Clear any previous guest session data
+    sessionStorage.removeItem("guestAnalysis");
+    sessionStorage.removeItem("guestResumeText");
+    sessionStorage.removeItem("guestJobDescription");
   };
 
   const continueAsGuest = () => {
@@ -49,6 +54,11 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.removeItem("user");
     localStorage.removeItem("guestMode");
+
+    // Clear guest session data
+    sessionStorage.removeItem("guestAnalysis");
+    sessionStorage.removeItem("guestResumeText");
+    sessionStorage.removeItem("guestJobDescription");
   };
 
   return (

@@ -15,8 +15,29 @@ const Results = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const guestAnalysis = location.state?.analysis;
-  const guestResumeText = location.state?.resumeText;
-  const guestJobDescription = location.state?.jobDescription;
+
+  const storedGuestAnalysis = sessionStorage.getItem("guestAnalysis");
+  const storedGuestResumeText = sessionStorage.getItem("guestResumeText");
+  const storedGuestJobDescription = sessionStorage.getItem(
+    "guestJobDescription",
+  );
+
+  const finalGuestAnalysis =
+    guestAnalysis ||
+    (storedGuestAnalysis ? JSON.parse(storedGuestAnalysis) : null);
+
+  const finalGuestResumeText =
+    location.state?.resumeText || storedGuestResumeText || "";
+
+  const finalGuestJobDescription =
+    location.state?.jobDescription || storedGuestJobDescription || "";
+  useEffect(() => {
+    if (guestAnalysis) {
+      sessionStorage.setItem("guestAnalysis", JSON.stringify(guestAnalysis));
+      sessionStorage.setItem("guestResumeText", guestResumeText || "");
+      sessionStorage.setItem("guestJobDescription", guestJobDescription || "");
+    }
+  }, [guestAnalysis, guestResumeText, guestJobDescription]);
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [coverLetter, setCoverLetter] = useState("");
@@ -26,8 +47,8 @@ const Results = () => {
   useEffect(() => {
     const fetchResult = async () => {
       // 👤 Guest result
-      if (!id && guestAnalysis) {
-        setResume(guestAnalysis);
+      if (!id && finalGuestAnalysis) {
+        setResume(finalGuestAnalysis);
         setLoading(false);
         return;
       }
@@ -52,7 +73,7 @@ const Results = () => {
     };
 
     fetchResult();
-  }, [id, guestAnalysis, navigate]);
+  }, [id, finalGuestAnalysis, navigate]);
 
   const handleCoverLetter = async () => {
     setGenerating(true);
@@ -72,8 +93,8 @@ const Results = () => {
       } else {
         // 👤 Guest user
         const response = await generateGuestCoverLetter({
-          resumeText: guestResumeText,
-          jobDescription: guestJobDescription,
+          resumeText: finalGuestResumeText,
+          jobDescription: finalGuestJobDescription,
         });
 
         data = response.data;
