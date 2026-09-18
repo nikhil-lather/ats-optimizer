@@ -220,3 +220,9 @@ Deployed on **Render** — backend serves the frontend build in production.
 - LinkedIn: [linkedin.com/in/nikhil-lather-3514272a9](https://linkedin.com/in/nikhil-lather-3514272a9)
 
 ---
+
+Whenever you make changes:
+
+git add .
+git commit -m "describe my changes"
+git push origin main

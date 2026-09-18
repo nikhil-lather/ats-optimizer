@@ -1,6 +1,6 @@
 .history-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--bg);
 }
 
 .history-content {
@@ -16,30 +16,30 @@
 .history-header h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text);
 }
 
 .history-header p {
-  color: #64748b;
+  color: var(--text-light);
   margin-top: 0.3rem;
 }
 
 .history-empty {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
 
 .history-empty h2 {
   font-size: 1.3rem;
-  color: #1e293b;
+  color: var(--text);
   margin-bottom: 0.5rem;
 }
 
 .history-empty p {
-  color: #64748b;
+  color: var(--text-light);
   margin-bottom: 1.5rem;
 }
 
@@ -49,10 +49,10 @@
 }
 
 .history-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--card);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +65,7 @@
 
 .history-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .history-card-left {
@@ -78,32 +78,32 @@
 .score-circle {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   font-weight: 700;
-  color: white;
+  color: var(--on-primary);
   flex-shrink: 0;
 }
 
 .score-circle.high {
-  background: linear-gradient(135deg, #16a34a, #22c55e);
+  background: var(--success);
 }
 
 .score-circle.medium {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
+  background: var(--warning);
 }
 
 .score-circle.low {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
+  background: var(--danger);
 }
 
 .history-card-info h3 {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text);
   margin-bottom: 0.3rem;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -114,7 +114,7 @@
 
 .history-card-info p {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-light);
 }
 
 .history-card-right {
@@ -125,9 +125,9 @@
 
 .btn-view {
   padding: 0.5rem 1rem;
-  background: #eff6ff;
-  color: #2563eb;
-  border-radius: 8px;
+  background: var(--primary-50);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   border: none;
@@ -136,14 +136,14 @@
 }
 
 .btn-view:hover {
-  background: #dbeafe;
+  background: var(--primary-100);
 }
 
 .btn-delete {
   padding: 0.5rem 1rem;
-  background: #fee2e2;
-  color: #dc2626;
-  border-radius: 8px;
+  background: var(--danger-100);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   border: none;
@@ -152,7 +152,7 @@
 }
 
 .btn-delete:hover {
-  background: #fecaca;
+  background: var(--danger-200);
 }
 
 .loading-container {
@@ -161,5 +161,5 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: #2563eb;
+  color: var(--primary-text);
 }
