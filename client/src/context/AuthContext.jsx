@@ -19,10 +19,17 @@ export const AuthProvider = ({ children }) => {
 
       if (savedGuest === "true") {
         setGuest(true);
+
+        // Make sure existing guest sessions have a guest ID
+        if (!localStorage.getItem("guestId")) {
+          const guestId = crypto.randomUUID();
+          localStorage.setItem("guestId", guestId);
+        }
       }
     } catch {
       localStorage.removeItem("user");
       localStorage.removeItem("guestMode");
+      localStorage.removeItem("guestId");
     }
 
     setLoading(false);
@@ -37,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(userWithToken));
     localStorage.removeItem("guestMode");
 
-    // Clear any previous guest session data
+    // Clear previous guest session data
     sessionStorage.removeItem("guestAnalysis");
     sessionStorage.removeItem("guestResumeText");
     sessionStorage.removeItem("guestJobDescription");
@@ -46,6 +53,12 @@ export const AuthProvider = ({ children }) => {
   const continueAsGuest = () => {
     setGuest(true);
     localStorage.setItem("guestMode", "true");
+
+    // Create a unique guest ID if one doesn't already exist
+    if (!localStorage.getItem("guestId")) {
+      const guestId = crypto.randomUUID();
+      localStorage.setItem("guestId", guestId);
+    }
   };
 
   const logout = () => {
@@ -54,6 +67,7 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.removeItem("user");
     localStorage.removeItem("guestMode");
+    localStorage.removeItem("guestId");
 
     // Clear guest session data
     sessionStorage.removeItem("guestAnalysis");

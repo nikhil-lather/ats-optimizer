@@ -1,7 +1,10 @@
 const Resume = require("../models/Resume");
 const User = require("../models/User");
+const GuestUsage = require("../models/GuestUsage");
 const { analyzeResume, generateCoverLetter } = require("../services/aiService");
 const { extractTextFromFile } = require("../services/pdfService");
+
+const GUEST_ANALYSIS_LIMIT = 4;
 
 // 🔍 Analyze Resume
 // @route POST /api/resume/analyze
@@ -9,31 +12,34 @@ const analyze = async (req, res) => {
   try {
     const { jobDescription } = req.body;
 
-    // ✅ Validate inputs
     if (!req.file) {
-      return res.status(400).json({ error: "📄 Please upload a resume file" });
+      return res.status(400).json({
+        error: "📄 Please upload a resume file",
+      });
     }
+
     if (!jobDescription || jobDescription.trim().length < 50) {
-      return res
-        .status(400)
-        .json({ error: "📝 Job description too short (min 50 chars)" });
+      return res.status(400).json({
+        error: "📝 Job description too short (min 50 chars)",
+      });
     }
 
     // 🔒 Check credit limit (max 10 free analyses)
     const user = await User.findById(req.user.id);
+
     if (user.creditsUsed >= 10) {
-      return res
-        .status(403)
-        .json({ error: "🚫 Free limit reached (10 analyses)" });
+      return res.status(403).json({
+        error: "🚫 Free limit reached (10 analyses)",
+      });
     }
 
     // 📄 Extract text from uploaded file
     const resumeText = await extractTextFromFile(req.file);
 
     if (!resumeText || resumeText.trim().length < 50) {
-      return res
-        .status(400)
-        .json({ error: "❌ Could not extract text from file" });
+      return res.status(400).json({
+        error: "❌ Could not extract text from file",
+      });
     }
 
     // 🤖 Send to AI for analysis
@@ -52,7 +58,9 @@ const analyze = async (req, res) => {
     });
 
     // 📈 Update user credits
-    await User.findByIdAndUpdate(req.user.id, { $inc: { creditsUsed: 1 } });
+    await User.findByIdAndUpdate(req.user.id, {
+      $inc: { creditsUsed: 1 },
+    });
 
     res.status(201).json({
       success: true,
@@ -65,7 +73,10 @@ const analyze = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Analysis error:", error);
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -76,9 +87,15 @@ const coverLetter = async (req, res) => {
     const { jobDescription, resumeId } = req.body;
 
     // 📂 Get resume from DB
-    const resume = await Resume.findOne({ _id: resumeId, userId: req.user.id });
+    const resume = await Resume.findOne({
+      _id: resumeId,
+      userId: req.user.id,
+    });
+
     if (!resume) {
-      return res.status(404).json({ error: "❌ Resume not found" });
+      return res.status(404).json({
+        error: "❌ Resume not found",
+      });
     }
 
     // 🤖 Generate cover letter
@@ -87,9 +104,14 @@ const coverLetter = async (req, res) => {
       jobDescription,
     );
 
-    res.json({ success: true, coverLetter: letter });
+    res.json({
+      success: true,
+      coverLetter: letter,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -138,9 +160,14 @@ const getHistory = async (req, res) => {
         "matchScore createdAt missingKeywords presentKeywords jobDescription",
       );
 
-    res.json({ success: true, resumes });
+    res.json({
+      success: true,
+      resumes,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -154,12 +181,19 @@ const getOne = async (req, res) => {
     });
 
     if (!resume) {
-      return res.status(404).json({ error: "❌ Resume not found" });
+      return res.status(404).json({
+        error: "❌ Resume not found",
+      });
     }
 
-    res.json({ success: true, resume });
+    res.json({
+      success: true,
+      resume,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -173,12 +207,19 @@ const deleteOne = async (req, res) => {
     });
 
     if (!resume) {
-      return res.status(404).json({ error: "❌ Resume not found" });
+      return res.status(404).json({
+        error: "❌ Resume not found",
+      });
     }
 
-    res.json({ success: true, message: "🗑️ Resume deleted successfully" });
+    res.json({
+      success: true,
+      message: "🗑️ Resume deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
@@ -186,22 +227,51 @@ const deleteOne = async (req, res) => {
 // @route POST /api/resume/guest-analyze
 const guestAnalyze = async (req, res) => {
   try {
-    const { jobDescription } = req.body;
+    const { jobDescription, guestId } = req.body;
 
-    // Validate inputs
+    // 🔑 Guest ID is required
+    if (!guestId) {
+      return res.status(400).json({
+        error: "❌ Guest session not found. Please refresh and try again.",
+      });
+    }
+
+    // 🔢 Get or create guest usage record
+    let guestUsage = await GuestUsage.findOne({ guestId });
+
+    if (!guestUsage) {
+      guestUsage = await GuestUsage.create({
+        guestId,
+        analysesUsed: 0,
+      });
+    }
+
+    // 🚫 Check guest analysis limit
+    if (guestUsage.analysesUsed >= GUEST_ANALYSIS_LIMIT) {
+      return res.status(403).json({
+        error:
+          "🚫 Guest limit reached (4 analyses). Create an account to continue.",
+        guestLimitReached: true,
+        analysesUsed: guestUsage.analysesUsed,
+        analysesRemaining: 0,
+      });
+    }
+
+    // 📄 Validate resume
     if (!req.file) {
       return res.status(400).json({
         error: "📄 Please upload a resume file",
       });
     }
 
+    // 📝 Validate job description
     if (!jobDescription || jobDescription.trim().length < 50) {
       return res.status(400).json({
         error: "📝 Job description too short (min 50 chars)",
       });
     }
 
-    // Extract resume text
+    // 📄 Extract resume text
     const resumeText = await extractTextFromFile(req.file);
 
     if (!resumeText || resumeText.trim().length < 50) {
@@ -210,12 +280,12 @@ const guestAnalyze = async (req, res) => {
       });
     }
 
-    // Send to AI
+    // 🤖 Send to AI
     const analysis = await analyzeResume(resumeText, jobDescription);
 
-    // IMPORTANT:
-    // Guest analysis is NOT saved to MongoDB.
-    // No user account or JWT is required.
+    // 📈 Increment guest usage ONLY after successful AI analysis
+    guestUsage.analysesUsed += 1;
+    await guestUsage.save();
 
     res.status(200).json({
       success: true,
@@ -223,6 +293,8 @@ const guestAnalyze = async (req, res) => {
       resumeText,
       jobDescription,
       guest: true,
+      analysesUsed: guestUsage.analysesUsed,
+      analysesRemaining: GUEST_ANALYSIS_LIMIT - guestUsage.analysesUsed,
     });
   } catch (error) {
     console.error("❌ Guest analysis error:", error);
