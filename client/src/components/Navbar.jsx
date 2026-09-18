@@ -30,6 +30,12 @@ const Navbar = () => {
           <>
             <span className="navbar-user">👤 Guest Mode</span>
             <span className="navbar-credits">Login to save your analyses</span>
+            <button
+              className="btn-create-account"
+              onClick={() => navigate("/register")}
+            >
+              Create Account
+            </button>
           </>
         ) : (
           <>

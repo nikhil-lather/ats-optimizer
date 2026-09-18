@@ -71,9 +71,17 @@ const Login = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
 
+          <div className="login-divider">
+            <span>OR</span>
+          </div>
+
           <button type="button" className="btn-guest" onClick={handleGuest}>
-            Continue as Guest
+            👤 Continue as Guest
           </button>
+
+          <p className="guest-info">
+            Try ATS Optimizer without creating an account.
+          </p>
         </form>
 
         <p className="login-footer">

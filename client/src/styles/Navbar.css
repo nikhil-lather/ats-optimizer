@@ -73,3 +73,19 @@
 .navbar-links a:hover {
   color: var(--primary-text);
 }
+
+.btn-create-account {
+  padding: 8px 14px;
+  border: 1px solid #2563eb;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-create-account:hover {
+  background: #1d4ed8;
+}
