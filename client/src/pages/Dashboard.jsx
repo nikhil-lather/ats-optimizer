@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
-import { analyzeResume } from "../services/api";
+import { analyzeResume, analyzeResumeAsGuest } from "../services/api";
 import Navbar from "../components/Navbar";
 import "../styles/Dashboard.css";
 
@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, guest } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
@@ -36,9 +36,17 @@ const Dashboard = () => {
       formData.append("resume", file);
       formData.append("jobDescription", jobDescription);
 
-      const { data } = await analyzeResume(formData);
+      const { data } = guest
+        ? await analyzeResumeAsGuest(formData)
+        : await analyzeResume(formData);
       toast.success("Analysis complete! 🎯");
-      navigate(`/results/${data.resumeId}`);
+      if (guest) {
+        navigate("/results", {
+          state: { analysis: data.analysis },
+        });
+      } else {
+        navigate(`/results/${data.resumeId}`);
+      }
     } catch (error) {
       toast.error(error.response?.data?.error || "Analysis failed");
     } finally {
@@ -58,8 +66,17 @@ const Dashboard = () => {
         </div>
 
         <div className="credits-bar">
-          <p>⚡ {creditsRemaining} free analyses remaining</p>
-          <span>10 total per account</span>
+          {guest ? (
+            <>
+              <p>👤 Guest Mode</p>
+              <span>Analysis won't be saved to your account</span>
+            </>
+          ) : (
+            <>
+              <p>⚡ {creditsRemaining} free analyses remaining</p>
+              <span>10 total per account</span>
+            </>
+          )}
         </div>
 
         <div className="dashboard-card">

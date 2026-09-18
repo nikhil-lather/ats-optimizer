@@ -4,6 +4,7 @@ const multer = require("multer");
 const { protect } = require("../middleware/auth");
 const {
   analyze,
+  guestAnalyze,
   coverLetter,
   getHistory,
   getOne,
@@ -30,6 +31,7 @@ const upload = multer({
 
 // 🛣️ Routes
 router.post("/analyze", protect, upload.single("resume"), analyze);
+router.post("/guest-analyze", upload.single("resume"), guestAnalyze);
 router.post("/cover-letter", protect, coverLetter);
 router.get("/history", protect, getHistory);
 router.get("/:id", protect, getOne);

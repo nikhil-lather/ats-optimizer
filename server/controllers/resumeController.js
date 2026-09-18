@@ -148,4 +148,60 @@ const deleteOne = async (req, res) => {
   }
 };
 
-module.exports = { analyze, coverLetter, getHistory, getOne, deleteOne };
+// 👤 Guest Resume Analysis
+// @route POST /api/resume/guest-analyze
+const guestAnalyze = async (req, res) => {
+  try {
+    const { jobDescription } = req.body;
+
+    // Validate inputs
+    if (!req.file) {
+      return res.status(400).json({
+        error: "📄 Please upload a resume file",
+      });
+    }
+
+    if (!jobDescription || jobDescription.trim().length < 50) {
+      return res.status(400).json({
+        error: "📝 Job description too short (min 50 chars)",
+      });
+    }
+
+    // Extract resume text
+    const resumeText = await extractTextFromFile(req.file);
+
+    if (!resumeText || resumeText.trim().length < 50) {
+      return res.status(400).json({
+        error: "❌ Could not extract text from file",
+      });
+    }
+
+    // Send to AI
+    const analysis = await analyzeResume(resumeText, jobDescription);
+
+    // IMPORTANT:
+    // Guest analysis is NOT saved to MongoDB.
+    // No user account or JWT is required.
+
+    res.status(200).json({
+      success: true,
+      analysis,
+      guest: true,
+    });
+  } catch (error) {
+    console.error("❌ Guest analysis error:", error);
+
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  analyze,
+  guestAnalyze,
+  coverLetter,
+  getHistory,
+  getOne,
+  deleteOne,
+};

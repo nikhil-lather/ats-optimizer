@@ -4,39 +4,67 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [guest, setGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("user");
+      const savedGuest = localStorage.getItem("guestMode");
+
       if (savedUser) {
         const parsed = JSON.parse(savedUser);
-        setTimeout(() => setUser(parsed), 0);
+        setUser(parsed);
+      }
+
+      if (savedGuest === "true") {
+        setGuest(true);
       }
     } catch {
       localStorage.removeItem("user");
+      localStorage.removeItem("guestMode");
     }
-    // eslint-disable-next-line
+
     setLoading(false);
   }, []);
 
   const login = (userData, token) => {
     const userWithToken = { ...userData, token };
+
     setUser(userWithToken);
+    setGuest(false);
+
     localStorage.setItem("user", JSON.stringify(userWithToken));
+    localStorage.removeItem("guestMode");
+  };
+
+  const continueAsGuest = () => {
+    setGuest(true);
+    localStorage.setItem("guestMode", "true");
   };
 
   const logout = () => {
     setUser(null);
+    setGuest(false);
+
     localStorage.removeItem("user");
+    localStorage.removeItem("guestMode");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        guest,
+        login,
+        continueAsGuest,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// eslint-disable-next-line
 export const useAuth = () => useContext(AuthContext);

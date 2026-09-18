@@ -8,11 +8,17 @@ import "../styles/Login.css";
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, continueAsGuest } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleGuest = () => {
+    continueAsGuest();
+    toast.success("Continuing as guest 👋");
+    navigate("/dashboard");
   };
 
   const handleSubmit = async (e) => {
@@ -63,6 +69,10 @@ const Login = () => {
 
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
+          </button>
+
+          <button type="button" className="btn-guest" onClick={handleGuest}>
+            Continue as Guest
           </button>
         </form>
 
