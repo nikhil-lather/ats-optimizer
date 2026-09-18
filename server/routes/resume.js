@@ -6,6 +6,7 @@ const {
   analyze,
   guestAnalyze,
   coverLetter,
+  guestCoverLetter,
   getHistory,
   getOne,
   deleteOne,
@@ -33,6 +34,7 @@ const upload = multer({
 router.post("/analyze", protect, upload.single("resume"), analyze);
 router.post("/guest-analyze", upload.single("resume"), guestAnalyze);
 router.post("/cover-letter", protect, coverLetter);
+router.post("/guest-cover-letter", guestCoverLetter);
 router.get("/history", protect, getHistory);
 router.get("/:id", protect, getOne);
 router.delete("/:id", protect, deleteOne);

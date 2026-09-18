@@ -1,14 +1,22 @@
 import jsPDF from "jspdf";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getOne, generateCoverLetter } from "../services/api";
+import {
+  getOne,
+  generateCoverLetter,
+  generateGuestCoverLetter,
+} from "../services/api";
 import Navbar from "../components/Navbar";
 import "../styles/Results.css";
 
 const Results = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const guestAnalysis = location.state?.analysis;
+  const guestResumeText = location.state?.resumeText;
+  const guestJobDescription = location.state?.jobDescription;
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [coverLetter, setCoverLetter] = useState("");
@@ -17,30 +25,65 @@ const Results = () => {
 
   useEffect(() => {
     const fetchResult = async () => {
-      try {
-        const { data } = await getOne(id);
-        setResume(data.resume);
-      } catch {
-        toast.error("Failed to load results");
-        navigate("/dashboard");
-      } finally {
+      // 👤 Guest result
+      if (!id && guestAnalysis) {
+        setResume(guestAnalysis);
         setLoading(false);
+        return;
       }
+
+      // 🔐 Logged-in user result
+      if (id) {
+        try {
+          const { data } = await getOne(id);
+          setResume(data.resume);
+        } catch {
+          toast.error("Failed to load results");
+          navigate("/dashboard");
+        } finally {
+          setLoading(false);
+        }
+        return;
+      }
+
+      toast.error("No results found");
+      navigate("/dashboard");
+      setLoading(false);
     };
+
     fetchResult();
-  }, [id, navigate]);
+  }, [id, guestAnalysis, navigate]);
 
   const handleCoverLetter = async () => {
     setGenerating(true);
     setShowModal(true);
+
     try {
-      const { data } = await generateCoverLetter({
-        resumeId: id,
-        jobDescription: resume.jobDescription,
-      });
+      let data;
+
+      if (id) {
+        // 🔐 Logged-in user
+        const response = await generateCoverLetter({
+          resumeId: id,
+          jobDescription: resume.jobDescription,
+        });
+
+        data = response.data;
+      } else {
+        // 👤 Guest user
+        const response = await generateGuestCoverLetter({
+          resumeText: guestResumeText,
+          jobDescription: guestJobDescription,
+        });
+
+        data = response.data;
+      }
+
       setCoverLetter(data.coverLetter);
-    } catch {
-      toast.error("Failed to generate cover letter");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.error || "Failed to generate cover letter",
+      );
       setShowModal(false);
     } finally {
       setGenerating(false);

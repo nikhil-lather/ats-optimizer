@@ -52,6 +52,10 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/results",
+    element: <Results />,
+  },
+  {
     path: "*",
     element: <Error />,
   },

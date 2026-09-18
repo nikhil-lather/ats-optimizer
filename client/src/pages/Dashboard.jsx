@@ -42,7 +42,11 @@ const Dashboard = () => {
       toast.success("Analysis complete! 🎯");
       if (guest) {
         navigate("/results", {
-          state: { analysis: data.analysis },
+          state: {
+            analysis: data.analysis,
+            resumeText: data.resumeText,
+            jobDescription: data.jobDescription,
+          },
         });
       } else {
         navigate(`/results/${data.resumeId}`);

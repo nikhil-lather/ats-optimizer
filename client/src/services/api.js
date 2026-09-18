@@ -28,5 +28,7 @@ export const getOne = (id) => API.get(`/resume/${id}`);
 export const deleteResume = (id) => API.delete(`/resume/${id}`);
 export const generateCoverLetter = (data) =>
   API.post("/resume/cover-letter", data);
+export const generateGuestCoverLetter = (data) =>
+  API.post("/resume/guest-cover-letter", data);
 
 export default API;

@@ -93,6 +93,40 @@ const coverLetter = async (req, res) => {
   }
 };
 
+// 👤 Guest Cover Letter
+// @route POST /api/resume/guest-cover-letter
+const guestCoverLetter = async (req, res) => {
+  try {
+    const { resumeText, jobDescription } = req.body;
+
+    if (!resumeText || resumeText.trim().length < 50) {
+      return res.status(400).json({
+        error: "📄 Resume text is missing or too short",
+      });
+    }
+
+    if (!jobDescription || jobDescription.trim().length < 50) {
+      return res.status(400).json({
+        error: "📝 Job description too short (min 50 chars)",
+      });
+    }
+
+    const letter = await generateCoverLetter(resumeText, jobDescription);
+
+    res.json({
+      success: true,
+      coverLetter: letter,
+      guest: true,
+    });
+  } catch (error) {
+    console.error("❌ Guest cover letter error:", error);
+
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
 // 📋 Get Analysis History
 // @route GET /api/resume/history
 const getHistory = async (req, res) => {
@@ -186,6 +220,8 @@ const guestAnalyze = async (req, res) => {
     res.status(200).json({
       success: true,
       analysis,
+      resumeText,
+      jobDescription,
       guest: true,
     });
   } catch (error) {
@@ -201,6 +237,7 @@ module.exports = {
   analyze,
   guestAnalyze,
   coverLetter,
+  guestCoverLetter,
   getHistory,
   getOne,
   deleteOne,
