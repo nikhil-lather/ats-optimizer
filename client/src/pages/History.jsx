@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 import { getHistory, deleteResume } from "../services/api";
 import Navbar from "../components/Navbar";
 import "../styles/History.css";
 
 const History = () => {
+  const { guest } = useAuth();
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (guest) {
+      setLoading(false);
+      return;
+    }
+
     const fetchHistory = async () => {
       try {
         const { data } = await getHistory();
@@ -21,8 +28,9 @@ const History = () => {
         setLoading(false);
       }
     };
+
     fetchHistory();
-  }, []);
+  }, [guest]);
 
   const handleDelete = async (e, id) => {
     e.stopPropagation();
@@ -59,10 +67,30 @@ const History = () => {
       <div className="history-content">
         <div className="history-header">
           <h1>Analysis History 📋</h1>
-          <p>All your previous resume analyses</p>
+          {guest ? (
+            <p>
+              You're using Guest Mode. Create an account to save your analyses.
+            </p>
+          ) : (
+            <p>All your previous resume analyses</p>
+          )}
         </div>
 
-        {resumes.length === 0 ? (
+        {guest ? (
+          <div className="history-empty">
+            <h2>History is available for registered users 🔐</h2>
+            <p>
+              Your guest analyses aren't saved. Create an account to keep your
+              analysis history.
+            </p>
+            <button
+              className="btn-new-analysis"
+              onClick={() => navigate("/register")}
+            >
+              ✨ Create Account
+            </button>
+          </div>
+        ) : resumes.length === 0 ? (
           <div className="history-empty">
             <h2>No analyses yet!</h2>
             <p>Start by analyzing your resume against a job description</p>

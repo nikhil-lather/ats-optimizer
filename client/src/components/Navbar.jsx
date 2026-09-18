@@ -5,7 +5,7 @@ import "../styles/Navbar.css";
 import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, guest, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,10 +26,19 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-right">
-        <span className="navbar-user">Hi, {user?.name} 👋</span>
-        <span className="navbar-credits">
-          {10 - (user?.creditsUsed || 0)} credits left
-        </span>
+        {guest ? (
+          <>
+            <span className="navbar-user">👤 Guest Mode</span>
+            <span className="navbar-credits">Login to save your analyses</span>
+          </>
+        ) : (
+          <>
+            <span className="navbar-user">Hi, {user?.name} 👋</span>
+            <span className="navbar-credits">
+              {10 - (user?.creditsUsed || 0)} credits left
+            </span>
+          </>
+        )}
         <ThemeToggle />
         <button className="btn-logout" onClick={handleLogout}>
           Logout
