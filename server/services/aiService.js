@@ -51,7 +51,7 @@ Be strict and accurate. Only return valid JSON, nothing else.`,
 
 const generateCoverLetter = async (resumeText, jobDescription) => {
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
     messages: [
       {
         role: "user",
